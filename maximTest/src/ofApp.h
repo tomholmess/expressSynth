@@ -33,12 +33,9 @@ class ofApp : public ofBaseApp{
     int bufferSize, sampleRate, initialBufferSize;
     
     // Serial
-    ofSerial accelIn;
-    vector<unsigned char> xVec, yVec, zVec;
-    bool xReceive = false, yReceive = false, zReceive = false;
     
     // Accelerometer
-    float xAccel, yAccel, zAccel;
+    float xIn, yIn, zIn;
     
     // Bluetooth LE
     BLEDelegate *bluetooth;

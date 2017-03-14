@@ -15,6 +15,11 @@
 @synthesize yAccel;
 @synthesize zAccel;
 
+- (void) setup
+{
+    autoConnect = TRUE;
+    xAccel = 0.21;
+}
 
 
 /*
@@ -78,70 +83,70 @@
     
 }
 
-//
-//
-///* Update X-Acceleration data received from device */
-//-(void) updateX:(NSData *)data
-//{
-//    const uint8_t * reportData = [data bytes];
-//    uint16_t ms = 0;
-//
-//    if ((reportData[0] & 0x01) == 0) {
-//        /* uint8 bpm */
-//        ms = reportData[1];
-//    }
-//    else
-//    {
-//        /* uint16 bpm */
-//        ms = CFSwapInt16LittleToHost(*(uint16_t *)(&reportData[1]));
-//    }
-//
-//    uint16_t oldMs = self.xAccel;
-//    self.xAccel = ms;
-//
-//}
-//
-///* Update Y-Acceleration data received from device */
-//-(void) updateY:(NSData *)data
-//{
-//    const uint8_t * reportData = [data bytes];
-//    uint16_t ms = 0;
-//
-//    if ((reportData[0] & 0x01) == 0) {
-//        /* uint8 bpm */
-//        ms = reportData[1];
-//    }
-//    else
-//    {
-//        /* uint16 bpm */
-//        ms = CFSwapInt16LittleToHost(*(uint16_t *)(&reportData[1]));
-//    }
-//
-//    uint16_t oldMs = self.yAccel;
-//    self.yAccel = ms;
-//
-//}
-//
-///* Update Z-Acceleration data received from device */
-//-(void) updateZ:(NSData *)data
-//{
-//    const uint8_t * reportData = [data bytes];
-//    uint16_t ms = 0;
-//
-//    if ((reportData[0] & 0x01) == 0) {
-//        /* uint8 bpm */
-//        ms = reportData[1];
-//    }
-//    else
-//    {
-//        /* uint16 bpm */
-//        ms = CFSwapInt16LittleToHost(*(uint16_t *)(&reportData[1]));
-//    }
-//
-//    uint16_t oldMs = self.zAccel;
-//    self.zAccel = ms;
-//
-//}
+
+
+/* Update X-Acceleration data received from device */
+-(void) updateX:(NSData *)data
+{
+    const uint8_t * reportData = (uint8_t*)[data bytes];
+    uint16_t ms = 0;
+
+    if ((reportData[0] & 0x01) == 0) {
+        /* uint8 bpm */
+        ms = reportData[1];
+    }
+    else
+    {
+        /* uint16 bpm */
+        ms = CFSwapInt16LittleToHost(*(uint16_t *)(&reportData[1]));
+    }
+
+    uint16_t oldMs = self.xAccel;
+    self.xAccel = ms;
+
+}
+
+/* Update Y-Acceleration data received from device */
+-(void) updateY:(NSData *)data
+{
+    const uint8_t * reportData = (uint8_t*)[data bytes];
+    uint16_t ms = 0;
+
+    if ((reportData[0] & 0x01) == 0) {
+        /* uint8 bpm */
+        ms = reportData[1];
+    }
+    else
+    {
+        /* uint16 bpm */
+        ms = CFSwapInt16LittleToHost(*(uint16_t *)(&reportData[1]));
+    }
+
+    uint16_t oldMs = self.yAccel;
+    self.yAccel = ms;
+
+}
+
+/* Update Z-Acceleration data received from device */
+-(void) updateZ:(NSData *)data
+{
+    const uint8_t * reportData = (uint8_t*)[data bytes];
+    uint16_t ms = 0;
+
+    if ((reportData[0] & 0x01) == 0) {
+        /* uint8 bpm */
+        ms = reportData[1];
+    }
+    else
+    {
+        /* uint16 bpm */
+        ms = CFSwapInt16LittleToHost(*(uint16_t *)(&reportData[1]));
+    }
+
+    uint16_t oldMs = self.zAccel;
+    self.zAccel = ms;
+
+}
 
 
 /*
@@ -153,6 +158,10 @@
     [manager scanForPeripheralsWithServices:[NSArray arrayWithObject:[CBUUID UUIDWithString:@"180D"]] options:nil];
     /* Search for controllerTwo UUID 180E */
     [manager scanForPeripheralsWithServices:[NSArray arrayWithObject:[CBUUID UUIDWithString:@"180E"]] options:nil];
+    [self stopScan];
+    
+    
+    [manager connectPeripheral:controllerOne options:nil];
     
 }
 /*
