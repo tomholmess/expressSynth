@@ -10,27 +10,10 @@ void ofApp::setup(){
     sampleRate = 44100;
     bufferSize = 512;
     
-    arp.loadMovie("movies/arpGif.mp4");
-    circle.loadMovie("movies/circleGif.mp4");
-    sine.loadMovie("movies/sineGif.mp4");
-    singleUp.loadMovie("movies/singleUpGif.mp4");
-    square.loadMovie("movies/squareGif.mp4");
-    triangle.loadMovie("movies/triangleGif.mp4");
+    interface.setupUI();
+    interface.loadGifs();
     
-    arp.play();
-    circle.play();
-    sine.play();
-    singleUp.play();
-    square.play();
-    triangle.play();
-    
-    titleText.loadFont("Engcomica.otf", 96);
-    headerText.loadFont("Engcomica.otf", 42);
-    normalText.loadFont("Engcomica.otf", 32);
-    smallText.loadFont("Engcomica.otf", 22);
-    verySmallText.loadFont("Engcomica.otf", 16);
-    
-    bluetooth.setup;
+    adafruit.setup(1, 9600);
     
     ofxMaxiSettings::setup(sampleRate, 2, bufferSize);
     ofSoundStreamSetup(2, 2, this, sampleRate, bufferSize, 4);
@@ -40,37 +23,101 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    xIn = [bluetooth xAccel];
-    cout << xIn << endl;
+    interface.drawGraphic();
     
-    arp.update();
-    circle.update();
-    sine.update();
-    singleUp.update();
-    square.update();
-    triangle.update();
+// 10 and 13 are the ASCII values for new line and carriage return respectively
+// I can see how this works in terms of splitting up an array of chars into their respective values
+// Also I can no do the conversion from a char buffer to a float
+// I just can't fill up a char[] with adafruit.readByte()!?!?
+//
+//    if ((char)adafruit.readByte() != 10 || (char)adafruit.readByte() != 13) {
+//        char xAccel[] = "-2.31493945 -2.712 10.96";
+    //   i.e. this doesnt work....
+        // char xAccel[] = (char)adafruit.readByte();
+    //  I've tried char xAccel[7] = (char)adafruit.readByte();
+//        char* pEnd;
+//        float xAcc, xAcc2;
+//        xAcc = strtof(xAccel, &pEnd);
+//        xAcc2 = strtof(pEnd, NULL);
+//        cout << xAcc << " " << xAcc2 << endl;
+//    }
     
+    // This stopped everything from working entirely
+//    while ((char)adafruit.readByte() != 10 || (char)adafruit.readByte() != 13) {
+//        bufferIn.push_back(adafruit.readByte());
+//    }
     
+    // This is in conjunction with the above function and
+//    if((char)adafruit.readByte() == 10 || (char)adafruit.readByte() == 13) {
+//        string str(bufferIn.begin(), bufferIn.end());
+//        char xAccel[] = (char)bufferIn;
+//        
+//    }
+    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-    ofSetColor(255, 255, 255);
-    arp.draw(60, 400, videoX, videoY);
-    circle.draw(210, 400, videoX, videoY);
-    sine.draw(360, 400, videoX, videoY);
-    singleUp.draw(510, 400, videoX, videoY);
-    square.draw(660, 400, videoX, videoY);
-    triangle.draw(810, 400, videoX, videoY);
+//    interface.drawGraphic();
+
+    if(section == "title") {
+        interface.title();
+    }
     
-    ofSetColor(0);
-    string title = "expresSynth";
-    titleText.drawString(title, ofGetWidth()/2 - (titleText.stringWidth(title)/2), ofGetHeight()/2);
-    string intro = "A 16 Voice Quad VCO Gestural Wireless Synth Extravaganza";
-    smallText.drawString(intro, ofGetWidth()/2 - (smallText.stringWidth(intro)/2), 360);
-    string clickToStart = "clickToBegin";
-    verySmallText.drawString(clickToStart, ofGetWidth()/2 - (verySmallText.stringWidth(clickToStart)/2), 570);
+    if(section == "pairing") {
+        interface.pairing();
+    }
+    
+    if(section == "main") {
+        interface.main();
+    }
+    if(section == "oscSelect") {
+        interface.oscSelect();
+    }
+    if(section == "oscControl") {
+        interface.oscControl();
+    }
+    if(section == "envelopeControl") {
+        interface.envelopeControl();
+    }
+    if(section == "filterSelect") {
+        interface.filterSelect();
+    }
+    if(section == "filterControl") {
+        interface.filterControl();
+    }
+    if(section == "LFOSelect") {
+        interface.LFOSelect();
+    }
+    if(section == "LFOControl") {
+        interface.LFOControl();
+    }
+    if(section == "portaControl") {
+        interface.portaControl();
+    }
+    if(section == "tremControl") {
+        interface.tremControl();
+    }
+    if(section == "arpSelect") {
+        interface.arpSelect();
+    }
+    if(section == "arpControl") {
+        interface.arpControl();
+    }
+    if(section == "FXSelect") {
+        interface.FXSelect();
+    }
+    if(section == "chorusControl") {
+        interface.chorusControl();
+    }
+    if(section == "delayControl") {
+        interface.delayControl();
+    }
+    if(section == "reverbControl") {
+        interface.reverbControl();
+    }
     
 }
 
@@ -86,7 +133,65 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    if (key == '1') {
+        section = "title";
+    }
+    if (key == '2') {
+        section = "pairing";
+    }
+    if (key == '3') {
+        section = "main";
+    }
+    if (key == '4') {
+        if(section == "oscSelect") {
+            section = "oscControl";
+        } else {
+            section = "oscSelect";
+        }
+    }
+    if (key == '5') {
+        section = "envelopeControl";
+    }
+    if (key == '6') {
+        if(section == "filterSelect") {
+            section = "filterControl";
+        } else {
+            section = "filterSelect";
+        }
+    }
+    if (key == '7') {
+        if(section == "LFOSelect") {
+            section = "LFOControl";
+        } else if(section == "LFOControl") {
+            section = "portaControl";
+        } else if(section == "portaControl") {
+            section = "tremControl";
+        } else if(section == "tremControl") {
+            section = "LFOSelect";
+        } else {
+            section = "LFOSelect";
+        }
+    }
+    if (key == '8') {
+        if(section == "arpSelect") {
+            section = "arpControl";
+        } else {
+            section = "arpSelect";
+        }
+    }
+    if (key == '9') {
+        if(section == "FXSelect") {
+            section = "chorusControl";
+        } else if(section == "chorusControl") {
+            section = "delayControl";
+        } else if(section == "delayControl") {
+            section = "reverbControl";
+        } else if(section == "reverbControl") {
+            section = "FXSelect";
+        } else {
+            section = "FXSelect";
+        }
+    }
 }
 
 //--------------------------------------------------------------

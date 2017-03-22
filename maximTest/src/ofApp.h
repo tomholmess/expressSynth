@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxMaxim.h"
 #include "SynthVoice.h"
+#include "Interface.h"
 
 // #include "ofxMidi.h"
 #include "BLEDelegate.h"
@@ -41,13 +42,10 @@ class ofApp : public ofBaseApp{
     BLEDelegate *bluetooth;
     
     // Text and GUI
-    ofTrueTypeFont normalText;
-    ofTrueTypeFont headerText;
-    ofTrueTypeFont titleText;
-    ofTrueTypeFont smallText;
-    ofTrueTypeFont verySmallText;
+    Interface interface;
+    string section = "main";
     
-    ofVideoPlayer arp, circle, sine, singleUp, square, triangle;
-    const int videoX = 130, videoY = 130, videoGap = 20;
+    ofSerial adafruit;
+    vector<char> bufferIn;
     
 };
