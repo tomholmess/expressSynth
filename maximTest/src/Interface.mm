@@ -153,8 +153,8 @@ void Interface::envelopeControl() {
 void Interface::filterSelect() {
     drawHeadings(transparency2, transparency2, transparency1, transparency2, transparency2, transparency2, transparency2, 1, 1, 2, 1, 1, 1);
     waveformSeq(20, 450);
-    drawGif(bothDown, 60, 300, "Low Pass", 1.0, 255, 100);
-    drawGif(bothUp, 210, 300, "High Pass", 1.0, 255, 100);
+    drawGif(lineDown, 60, 300, "Low Pass", 1.0, 255, 100);
+    drawGif(lineUp, 210, 300, "High Pass", 1.0, 255, 100);
     drawGif(circle, 360, 300, "Band Pass", 1.0, 255, 100);
     drawGif(bandpass, 510, 300, "Resonance", 1.0, 255, 100);
 }

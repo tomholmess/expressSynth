@@ -4,7 +4,7 @@
 #include "ofxMaxim.h"
 #include "SynthVoice.h"
 #include "Interface.h"
-
+#include "Gesture.h"
 // #include "ofxMidi.h"
 #include "BLEDelegate.h"
 
@@ -14,6 +14,7 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+        void drawTitles();
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -26,6 +27,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+
     void audioOut(float * output, int bufferSize, int nChannels);
     
 
@@ -36,7 +38,10 @@ class ofApp : public ofBaseApp{
     // Serial
     
     // Accelerometer
-    float xIn, yIn, zIn;
+    float xAccel, yAccel;
+    
+    // ML and Gesture Recognition
+    Gesture gesture;
     
     // Bluetooth LE
     BLEDelegate *bluetooth;

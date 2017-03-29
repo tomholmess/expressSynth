@@ -14,6 +14,7 @@
 		9514C2D90467055B1447D074 /* stb_vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 80CD68E0DDF2C60D2715CC78 /* stb_vorbis.c */; };
 		96084990AF216648B8B98E00 /* maxiFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A4EE0E35ED739A31CD0153E /* maxiFFT.cpp */; };
 		A6460E7F1E7AD619000B9D9D /* Interface.mm in Sources */ = {isa = PBXBuildFile; fileRef = A6460E7D1E7AD619000B9D9D /* Interface.mm */; };
+		A66E92261E82E11800CBEFD7 /* Gesture.mm in Sources */ = {isa = PBXBuildFile; fileRef = A66E92241E82E11800CBEFD7 /* Gesture.mm */; };
 		A6B796C21E64A900008F86C5 /* SynthVoice.mm in Sources */ = {isa = PBXBuildFile; fileRef = A6B796C01E64A900008F86C5 /* SynthVoice.mm */; };
 		A6B796C91E64B9B5008F86C5 /* BLEDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A6B796C81E64B9B5008F86C5 /* BLEDelegate.mm */; };
 		A6B796CD1E64BA1E008F86C5 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6B796CC1E64BA1E008F86C5 /* CoreBluetooth.framework */; };
@@ -69,6 +70,9 @@
 		9D2FB19B70632A6F86622D94 /* maxiGrains.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = maxiGrains.cpp; path = ../../../addons/ofxMaxim/libs/maxiGrains.cpp; sourceTree = SOURCE_ROOT; };
 		A6460E7D1E7AD619000B9D9D /* Interface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Interface.mm; sourceTree = "<group>"; };
 		A6460E7E1E7AD619000B9D9D /* Interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interface.h; sourceTree = "<group>"; };
+		A64C97581E83F02F00F396F8 /* ofxMidi */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ofxMidi; path = ../../../addons/ofxMidi; sourceTree = "<group>"; };
+		A66E92241E82E11800CBEFD7 /* Gesture.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Gesture.mm; sourceTree = "<group>"; };
+		A66E92251E82E11800CBEFD7 /* Gesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gesture.h; sourceTree = "<group>"; };
 		A67372B9CAED43269F8D42D3 /* maxiBark.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = maxiBark.h; path = ../../../addons/ofxMaxim/libs/maxiBark.h; sourceTree = SOURCE_ROOT; };
 		A6B796C01E64A900008F86C5 /* SynthVoice.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SynthVoice.mm; sourceTree = "<group>"; };
 		A6B796C11E64A900008F86C5 /* SynthVoice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynthVoice.h; sourceTree = "<group>"; };
@@ -156,6 +160,14 @@
 			name = src;
 			sourceTree = "<group>";
 		};
+		A64C97571E83EAC800F396F8 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+				BB4B014C10F69532006C3DED /* addons */,
+			);
+			name = "New Group";
+			sourceTree = "<group>";
+		};
 		A6B796CB1E64BA1E008F86C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -169,6 +181,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				A64C97581E83F02F00F396F8 /* ofxMidi */,
 				6234D3BCE87D1C3BA2230F19 /* ofxMaxim */,
 			);
 			name = addons;
@@ -189,7 +202,7 @@
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
-				BB4B014C10F69532006C3DED /* addons */,
+				A64C97571E83EAC800F396F8 /* New Group */,
 				6948EE371B920CB800B5AC1A /* local_addons */,
 				E4B69B5B0A3A1756003C02F2 /* maximTestDebug.app */,
 				A6B796CB1E64BA1E008F86C5 /* Frameworks */,
@@ -202,12 +215,14 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.mm */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.mm */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
-				A6B796C11E64A900008F86C5 /* SynthVoice.h */,
 				A6B796C01E64A900008F86C5 /* SynthVoice.mm */,
-				A6B796CA1E64B9BF008F86C5 /* BLEDelegate.h */,
+				A6B796C11E64A900008F86C5 /* SynthVoice.h */,
 				A6B796C81E64B9B5008F86C5 /* BLEDelegate.mm */,
+				A6B796CA1E64B9BF008F86C5 /* BLEDelegate.h */,
 				A6460E7D1E7AD619000B9D9D /* Interface.mm */,
 				A6460E7E1E7AD619000B9D9D /* Interface.h */,
+				A66E92241E82E11800CBEFD7 /* Gesture.mm */,
+				A66E92251E82E11800CBEFD7 /* Gesture.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -321,6 +336,7 @@
 				22F21CE3B902225374BA1CA2 /* maximilian.cpp in Sources */,
 				A6B796C91E64B9B5008F86C5 /* BLEDelegate.mm in Sources */,
 				9514C2D90467055B1447D074 /* stb_vorbis.c in Sources */,
+				A66E92261E82E11800CBEFD7 /* Gesture.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

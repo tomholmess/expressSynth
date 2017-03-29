@@ -24,12 +24,16 @@ public:
     
     double VCO1Out, VCO2Out, VCO3Out, VCO4Out, VCOOut, LFOOut, VCF1Out, VCF2Out, ADSROut, TremOut, pitch, voiceOut;
     
-    double A, D, S, R, cutoff, resonance, filterA, filterD, filterS, filterR, LFOSpeed = 1., LFODepth, TremSpeed, TremDepth;
+    double cutoff, resonance, LFOSpeed = 1., LFODepth, TremSpeed, TremDepth;
     int waveOne, waveTwo, waveThree, waveFour, VCF1Type, VCF2Type;
     int waveTwoPitch, waveThreePitch, waveFourPitch;
     
+    
+    
     double voicePlay();
     void setEnvelope(double attack, double decay, double sustain, double release);
+    void setFilterEnvelope(double attack, double decay, double sustain, double release);
+    
     void setup();
     
     SynthVoice();

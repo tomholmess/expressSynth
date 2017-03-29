@@ -37,6 +37,13 @@ void SynthVoice::setEnvelope(double attack, double decay, double sustain, double
     ADSR.setRelease(release);
 }
 
+void SynthVoice::setFilterEnvelope(double attack, double decay, double sustain, double release) {
+    filterADSR.setAttack(attack);
+    filterADSR.setDecay(decay);
+    filterADSR.setSustain(sustain);
+    filterADSR.setRelease(release);
+}
+
 double SynthVoice::voicePlay() {
     ADSROut = ADSR.adsr(1., ADSR.trigger);
     
@@ -77,13 +84,10 @@ double SynthVoice::voicePlay() {
     } else if (VCF1Type == 3) { VCF1Out = VCF1.lopass(VCOOut, cutoff);
     }
     
-    if(VCF2Type == 0) { VCF2Out = VCF2.bandpass(VCF1Out, cutoff, resonance);
-    } else if (VCF2Type == 1) { VCF2Out = VCF2.lores(VCF1Out, cutoff, resonance);
-    } else if (VCF2Type == 2) { VCF2Out = VCF2.hipass(VCF1Out, cutoff);
-    } else if (VCF2Type == 3) { VCF2Out = VCF2.lopass(VCF1Out, cutoff);
-    }
+    // VCF filter = VCF envelope yeah mate
     
-    voiceOut = ADSROut * VCF2Out;
+    
+    voiceOut = ADSROut * VCF1Out;
     
     return voiceOut;
     

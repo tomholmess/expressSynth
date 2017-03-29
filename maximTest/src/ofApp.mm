@@ -13,7 +13,7 @@ void ofApp::setup(){
     interface.setupUI();
     interface.loadGifs();
     
-    adafruit.setup(1, 9600);
+    gesture.setupSerial();
     
     ofxMaxiSettings::setup(sampleRate, 2, bufferSize);
     ofSoundStreamSetup(2, 2, this, sampleRate, bufferSize, 4);
@@ -23,45 +23,26 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    interface.drawGraphic();
+    gesture.valuesIn();
     
-// 10 and 13 are the ASCII values for new line and carriage return respectively
-// I can see how this works in terms of splitting up an array of chars into their respective values
-// Also I can no do the conversion from a char buffer to a float
-// I just can't fill up a char[] with adafruit.readByte()!?!?
-//
-//    if ((char)adafruit.readByte() != 10 || (char)adafruit.readByte() != 13) {
-//        char xAccel[] = "-2.31493945 -2.712 10.96";
-    //   i.e. this doesnt work....
-        // char xAccel[] = (char)adafruit.readByte();
-    //  I've tried char xAccel[7] = (char)adafruit.readByte();
-//        char* pEnd;
-//        float xAcc, xAcc2;
-//        xAcc = strtof(xAccel, &pEnd);
-//        xAcc2 = strtof(pEnd, NULL);
-//        cout << xAcc << " " << xAcc2 << endl;
-//    }
-    
-    // This stopped everything from working entirely
-//    while ((char)adafruit.readByte() != 10 || (char)adafruit.readByte() != 13) {
-//        bufferIn.push_back(adafruit.readByte());
-//    }
-    
-    // This is in conjunction with the above function and
-//    if((char)adafruit.readByte() == 10 || (char)adafruit.readByte() == 13) {
-//        string str(bufferIn.begin(), bufferIn.end());
-//        char xAccel[] = (char)bufferIn;
-//        
-//    }
-    
-
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-//    interface.drawGraphic();
+    drawTitles();
+    
+}
 
+void ofApp::audioOut(float * output, int bufferSize, int nChannels){
+    
+    for(int i = 0; i < bufferSize; i+=2) {
+        
+    }
+    
+}
+
+void ofApp::drawTitles() {
     if(section == "title") {
         interface.title();
     }
@@ -117,17 +98,6 @@ void ofApp::draw(){
     }
     if(section == "reverbControl") {
         interface.reverbControl();
-    }
-    
-}
-
-void ofApp::audioOut(float * output, int bufferSize, int nChannels){
-    
-    for(int i = 0; i < bufferSize; i+=2) {
-        
-        output[i*nChannels    ] = voice[0].voicePlay() + voice[1].voicePlay() + voice[2].voicePlay() + voice[3].voicePlay();
-        output[i*nChannels + 1] = voice[0].voicePlay() + voice[1].voicePlay() + voice[2].voicePlay() + voice[3].voicePlay();
-
     }
 }
 
@@ -192,11 +162,50 @@ void ofApp::keyPressed(int key){
             section = "FXSelect";
         }
     }
+    
+    if(key == 'r') {
+        gesture.vectorRecord();
+    }
+    
+    if(key == 'a') {
+        gesture.arpRecord();
+    }
+    
+    if(key == 's') {
+        gesture.sineRecord();
+    }
+    
+    if(key == 'c') {
+        gesture.circleRecord();
+    }
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
+    if(key == 'r') {
+        gesture.vectorNormalize(gesture.recordInit, gesture.recordLerp, gesture.recordFinal, gesture.NUM_VALUES);
+    }
+    
+    if(key == 'a') {
+        gesture.vectorNormalize(gesture.arpInit, gesture.arpLerp, gesture.arpFinal, gesture.NUM_VALUES);
+    }
+    
+    if(key == 's') {
+        gesture.vectorNormalize(gesture.sineInit, gesture.sineLerp, gesture.sineFinal, gesture.NUM_VALUES);
+    }
+    
+    if(key == 'c') {
+        gesture.vectorNormalize(gesture.circleInit, gesture.circleLerp, gesture.circleFinal, gesture.NUM_VALUES);
+    }
+    
+    if(key == 'm') {
+        gesture.vectorCompare(gesture.recordFinal, gesture.circleFinal);
+    }
+    
+    if(key == 'b') {
 
+    }
 }
 
 //--------------------------------------------------------------
