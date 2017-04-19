@@ -1,2 +1,3 @@
 # expressSynth
-the maximTest project is the current latest iteration.
+the expresSynthProject folder is the latest iteration!
+
