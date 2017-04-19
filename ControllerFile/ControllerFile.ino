@@ -48,10 +48,18 @@ float xAccel;
 float yAccel;
 float zAccel;
 
+String xAcc;
+
 int32_t accelerometerID;
 int32_t xAccelID;
 int32_t yAccelID;
 int32_t zAccelID;
+
+int redButton;
+int blueButton;
+int redIndicate;
+int blueIndicate;
+
 
 /**************************************************************************/
 /*!
@@ -63,8 +71,11 @@ void setup(void)
 {
   
   accel.begin();
-  accel.setRange(ADXL345_RANGE_2_G);
+  accel.setRange(ADXL345_RANGE_8_G);
   accel.setDataRate(ADXL345_DATARATE_50_HZ );
+
+  pinMode(13, INPUT);
+  pinMode(12, INPUT);
 
   Serial.begin(9600);
 
@@ -157,40 +168,51 @@ void loop(void)
   sensors_event_t accelEvent;  
   accel.getEvent(&accelEvent);
 
+  yAccel = accelEvent.acceleration.y;
+  zAccel = accelEvent.acceleration.z;
   xAccel = accelEvent.acceleration.x;
-  yAccel = accelEvent.acceleration.z;
-  zAccel = accelEvent.acceleration.y;
 
-//  Serial.print(F("X acceleration: ") );
-  Serial.print("X");
-  Serial.print(xAccel, 2);
-//  
-//  Serial.print(F(", Y acceleration: ") );
-  Serial.print(" Y");
-  Serial.print(yAccel, 2);
-  
-//  Serial.print(F(", Z acceleration: ") );
-  Serial.print(" Z");
-  Serial.println(zAccel, 2);
+  redButton = digitalRead(13);
+  blueButton = digitalRead(10);
 
-  delay(100);
+  if(redButton == HIGH) {
+    redIndicate = 1;
+  } else if(redButton == LOW) {
+    redIndicate = 0;
+  }
+  if(blueButton == LOW) {
+    blueIndicate = 1;
+  } else if(blueButton == HIGH) {
+    blueIndicate = 0;
+  }
+
+  Serial.print(xAccel, 4);
+  Serial.print(" ");
+  Serial.print(zAccel, 4);
+  Serial.println(" ");
+  Serial.print(blueIndicate);
+  Serial.print(" ");
+  Serial.print(redIndicate);
+  Serial.println(" ");  
+  Serial.flush();
+  delay(50);
 
   /* Bluetooth Command is sent when \n (\r) or println is called */
   /* AT+GATTCHAR=CharacteristicID,value */
-
-  ble.print( F("AT+GATTCHAR=") );
-  ble.print( xAccelID );
-  ble.print( F(",00-") );
-  ble.println(xAccel);
-
-  ble.print( F("AT+GATTCHAR=") );
-  ble.print( yAccelID );
-  ble.print( F(",00-") );
-  ble.println(yAccel);
-
-  ble.print( F("AT+GATTCHAR=") );
-  ble.print( zAccelID );
-  ble.print( F(",00-") );
-  ble.println(zAccel);
+//
+//  ble.print( F("AT+GATTCHAR=") );
+//  ble.print( xAccelID );
+//  ble.print( F(",00-") );
+//  ble.println(xAccel);
+//
+//  ble.print( F("AT+GATTCHAR=") );
+//  ble.print( yAccelID );
+//  ble.print( F(",00-") );
+//  ble.println(yAccel);
+//
+//  ble.print( F("AT+GATTCHAR=") );
+//  ble.print( zAccelID );
+//  ble.print( F(",00-") );
+//  ble.println(zAccel);
 
 }
