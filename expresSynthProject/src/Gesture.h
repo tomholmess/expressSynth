@@ -18,7 +18,7 @@ class Gesture {
     
 public:
     
-    int NUM_VALUES = 20;
+    int NUM_VALUES = 50;
     
     void setupSerial();
     ofSerial adafruitOne;
@@ -34,6 +34,9 @@ public:
     int redI = 0;
     int redSum;
     
+    int blueCounter = 0;
+    int redCounter = 0;
+    
     bool bluePressed = false, blueReleased = false, redPressed = false, redReleased = false;
     
     int calibrationIndex = 1;
@@ -42,12 +45,9 @@ public:
     
     void valuesIn();
     
+    void buttonOn();
+    
     void buttonEvent();
-    
-    bool doublePress();
-    
-    int doubleSig = 0;
-    bool doubleOn = false;
 
 
     vector< pair<float, float> > calibrate(vector< pair<float, float> > vecIn);
@@ -80,35 +80,18 @@ public:
     vector< pair<float, float> > lineUp;
     vector< pair<float, float> > lineDown;
         
-    int testing();
+//    int testing();
     
-    int title();
-    int pairing();
     void calibration();
     int home();
     int oscSelect();
-    void oscControl();
-    void envelopeControl();
     int filterSelect();
     int filterSelectRed();
-    void filterControl();
     int LFOSelect();
     int LFOSelectRed();
-    void LFOControl();
-    void portaControl();
-    void tremControl();
     int arpSelect();
     int arpSelectRed();
-    void arpControl();
     int FXSelect();
-    void chorusControl();
-    void delayControl();
-    void reverbControl();
-    
-    // Keyboard keys for Calibration for now.
-    
-    // a = sine, s = arp, d = circle, f = square, g = triangle, h = saw
-    //   z = FX, x = bandpass, c = eight, v = lineUp, b = lineDown
     
     Gesture();
     

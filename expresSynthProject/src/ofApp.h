@@ -29,6 +29,8 @@ public:
     void gotMessage(ofMessage msg);
     
     void gestureSynthLink();
+    void displayCurrentSettings();
+    void setupStrings();
     
     void audioOut(float * output, int bufferSize, int nChannels);
     
@@ -36,12 +38,15 @@ public:
     // Sound
     SynthVoice voice[12];
     int bufferSize, sampleRate, initialBufferSize;
-    maxiOsc test;
+    bool patternOn = false;
+    maxiOsc patternMaker;
+    int patternCount;
     
     // ML and Gesture Recognition
     Gesture gesture;
- //   int calibrationIndex = 0;
+    int calibrationIndex = 1;
 
+    
     int blueBuf[8];
     int blueI = 0;
     int blueSum;
@@ -50,12 +55,13 @@ public:
     Interface interface;
     string section = "title";
     int secMove = 0;
+    string osc1type, osc2type, osc3type, osc4type, osc2semi, osc3semi, osc4semi, ampAttck, ampRelse, filterTyp, cutoff, res, filterAttck, filterRlse, filterSstn, lfospd, lfodpth, portaspd, portadpth, tremspd, tremdpth, arptyp, arpspd, arpoctves, chorusspd, chorusdpth, delaytme, delayfb, reverbamt;
     
     ofSerial adafruit;
     vector<char> bufferIn;
 
-    // Synth Variable Inita
-    float ampAttack = 1000, ampRelease = 1000, oscPitch = 1., osc2Pitch = 1., osc3Pitch = 1., osc4Pitch = 1., oscAddSub = 0, filterAttack = 1000., filterRelease = 1000., filterCutoff, filterRes, LFOSpeed, LFODepth, PortaSpeed, TremSpeed, TremDepth, ArpSpeed, ArpOctaves, ChorusSpeed, ChorusDepth, DelayTime, DelayFB, ReverbAmount;
+    // Synth Variable Inits
+    float ampAttack = 1000, ampRelease = 1000, oscPitch = 0., osc2Pitch = 0., osc3Pitch = 0., osc4Pitch = 0., oscAdd = 0, oscSub = 0, filterAttack = 1000., filterRelease = 1000., filterSustain = 0.9, filterCutoff = 3000, filterRes = 10, LFOSpeed = 0., LFODepth = 0., PortaSpeed = 0., TremSpeed = 0., TremDepth = 0., ArpSpeed = 0., ArpOctaves = 0., ChorusSpeed, ChorusDepth, DelayTime, DelayFB, ReverbAmount;
     
     int oscCurrentControl = 1;
 

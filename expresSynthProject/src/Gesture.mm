@@ -14,14 +14,21 @@ Gesture::Gesture() {
     
 }
 
+
+// Setup the serial connection on the 9600 baud.
 void Gesture::setupSerial() {
     adafruitOne.setup(1, 9600);
 }
 
 void Gesture::valuesIn() {
     
+    // I had a lot of help from Mick Grierson on this function, thank you Mick!
+    
+    // Assign buffer size to 22. This figure is the amount of character being send by the controller, as specified in the Arduino IDE code.
     int bufferSz = 22;
+    // Create a char buffer of that size
     char buffer[bufferSz];
+    // Create pointers to the end each reading
     char* pEnd;
     char* pEndTwo;
     char* pEndThree;
@@ -30,7 +37,9 @@ void Gesture::valuesIn() {
     
     for(int i = 0; i < bufferSz; i++) {
  
+        // Fill up the buffer with the incoming characters
         buffer[i] = (char)adafruitOne.readByte();
+        // Split the incoming data into parts, namely X acceleration, Y acceleration and 1 or 0 for blue and red button on/off
         xBuf = strtof(buffer, &pEnd);
         yBuf = strtof(pEnd, &pEndTwo);
         blueBuff = strtof(pEndTwo, &pEndThree);
@@ -40,7 +49,7 @@ void Gesture::valuesIn() {
     
     if(xBuf != 0 && yBuf != 0 && xBuf > -30.0 && xBuf < 30.0 && yBuf > -30.0 && yBuf < 30.0) {
 
-        xAccel = xBuf;
+        xAccel = 2*xBuf;
         yAccel = yBuf;
         blueButton = blueBuff;
         redButton = redBuff;
@@ -49,13 +58,44 @@ void Gesture::valuesIn() {
         
     }
     
+    // Flush and drain the buffer to clear it once each reading has been completed.
     adafruitOne.flush();
     adafruitOne.drain();
     
 }
 
-void Gesture::buttonEvent() {
+void Gesture::buttonOn() {
     
+    // The button on/off readings were at times intermittent, giving up to 8 0's when the button was pressed. This would stop the vectors being pushback
+    // during gesture recording, giving inaccurate recordings. To stop this I added booleans for pressed and released. Using a counter, when the button is pressed,
+    // the boolean is true until 15 0's have been recorded, signalling that the button has actually been released. Setting the gestures to record until a button released
+    // boolean is set to true stops the recordings from stopping if a few intermittent 0's accidentally come through.
+    if(blueButton == 1) {
+        blueCounter += 1;
+    }
+    
+    if(blueCounter == 0) {
+        bluePressed = false;
+    }
+    if(blueCounter > 0) {
+        bluePressed = true;
+    }
+    
+
+    if(redButton == 1) {
+        redCounter += 1;
+    }
+    
+    if(redCounter == 0) {
+        redPressed = false;
+    }
+    if(redCounter > 0) {
+        redPressed = true;
+    }
+}
+
+void Gesture::buttonEvent() {
+    // This function waits for 15 0's before declaring that a button has been released.
     blueBuf[blueI] = blueButton;
     blueI += 1;
     
@@ -71,6 +111,7 @@ void Gesture::buttonEvent() {
     
     if(lastBlue != currentBlue) {
         if(currentBlue == 0) {
+            blueCounter = 0;
             blueReleased = true;
         }
     }
@@ -92,6 +133,7 @@ void Gesture::buttonEvent() {
     
     if(lastRed != currentRed) {
         if(currentRed == 0) {
+            redCounter = 0;
             redReleased = true;
         }
     }
@@ -99,39 +141,7 @@ void Gesture::buttonEvent() {
     lastRed = currentRed;
 }
 
-bool Gesture::doublePress() {
-    
-    if(blueButton == 1 || redButton == 1) {
-        doubleSig += 1;
-    }
-    if(blueReleased == true || redReleased == true) {
-        if(doubleSig < 3) {
-            doubleOn = true;
-        }
-    }
-    doubleSig = 0;
-    
-    if(doubleOn == true) {
-        
-        if(blueButton == 1 || redButton == 1) {
-            doubleSig += 1;
-        }
-        if(blueReleased == true || redReleased == true) {
-            if(doubleSig < 3) {
-                return true;
-                cout << "boom" << endl;
-            } else {
-                return false;
-            }
-        }
-    
-    }
-    
-    doubleSig = 0;
-    doubleOn = false;
-
-    
-}
+// Linear Interpolation function, gives the increments between values given any specified start number, end number and amount of sections.
 
 float Gesture::lerpDifference(float first, float second, int amount) {
     
@@ -146,6 +156,8 @@ float Gesture::lerpDifference(float first, float second, int amount) {
     return lerpDiff;
     
 }
+
+// This function finds the minimum of up to 6 values. 6 is the most gestures to be compared at anyone point.
 
 int Gesture::findMinimum(float in1, float in2, float in3, float in4, float in5, float in6) {
     int returnVal;
@@ -173,6 +185,8 @@ int Gesture::findMinimum(float in1, float in2, float in3, float in4, float in5, 
     
 }
 
+// Push back the vector of pairs.
+
 vector< pair<float, float> > Gesture::shapeRecord(vector< pair<float, float> > shape) {
     
     shape.push_back(make_pair(xAccel, yAccel));
@@ -183,13 +197,24 @@ vector< pair<float, float> > Gesture::shapeRecord(vector< pair<float, float> > s
     
 }
 
+// Vector normalization function. Takes a vector of pairs of any given amount and returns a vector of pairs of a chosen amount, linearly interpolating between the values to give
+// a scaled, time invariant result.
+
 vector< pair<float, float> > Gesture::vectorNormalize(vector< pair<float, float> > vectorIn, int amount) {
     
+    // Determine the size of the incoming vector
     int vecInSize = vectorIn.size();
+    
     
     vector< pair<float, float> > vecLerp;
     vector< pair<float, float> > finalVec;
     
+    // For each value in the incoming vector, take the size of the desired vector and calculate the value of the increments between the consecutive points.
+    // Once thats complete, push back a vector of the original pairs of values with the number of increments in between. This gives a vector the length of the original
+    // multiplied by the desired sizes. Ie if the incoming vector is 47 pairs of values and we want a vector of 40 pairs, it creates a vector 1880 values, containing the original
+    // values and 40 linearly interpolated values inbetween each of the original values.
+
+
     for(int i = 0; i < (vecInSize-1); i++) {
         float lerpXAmt = lerpDifference(vectorIn[i].first, vectorIn[i+1].first, amount);
         float lerpYAmt = lerpDifference(vectorIn[i].second, vectorIn[i+1].second, amount);
@@ -198,6 +223,7 @@ vector< pair<float, float> > Gesture::vectorNormalize(vector< pair<float, float>
         }
     }
     
+    // Once we have that vector we can go through the vector of 1880, selecting every 47th pair of values (the size of the original vector) to give us a vector of 40 pairs.
     for(int i = 0; i < vecLerp.size(); i++) {
         if(i % (vecInSize-1) == 0) {
             finalVec.push_back(make_pair(vecLerp[i].first, vecLerp[i].second));
@@ -210,7 +236,7 @@ vector< pair<float, float> > Gesture::vectorNormalize(vector< pair<float, float>
 
 vector< pair<float, float> > Gesture::calibrate(vector< pair<float, float> > vecIn) {
 
-    if(blueButton == 1) {
+    if(bluePressed == true) {
         vecIn = shapeRecord(vecIn);
     }
     
@@ -221,16 +247,6 @@ vector< pair<float, float> > Gesture::calibrate(vector< pair<float, float> > vec
     
     return vecIn;
 
-}
-
-
-
-int Gesture::title() {
-    
-}
-
-int Gesture::pairing() {
-    
 }
 
 void Gesture::calibration() {
@@ -257,34 +273,26 @@ void Gesture::calibration() {
     
 }
 
-int Gesture::testing() {
-    
-    for(int i = 0; i < record.size(); i++) {
-        sineDiff += abs(record[i].first - sine[i].first) + abs(record[i].second - sine[i].second);
-        arpDiff += abs(record[i].first - arp[i].first) + abs(record[i].second - arp[i].second);
-        squareDiff += abs(record[i].first - square[i].first) + abs(record[i].second - square[i].second);
-        triangleDiff += abs(record[i].first - triangle[i].first) + abs(record[i].second - triangle[i].second);
-        sawDiff += abs(record[i].first - saw[i].first) + abs(record[i].second - saw[i].second);
-        FXDiff += abs(record[i].first - FX[i].first) + abs(record[i].second - FX[i].second);
-        eightDiff += abs(record[i].first - eight[i].first) + abs(record[i].second - eight[i].second);
-        luDiff += abs(record[i].first - lineUp[i].first) + abs(record[i].second - lineUp[i].second);
-        ldDiff += abs(record[i].first - lineDown[i].first) + abs(record[i].second - lineDown[i].second);
-    }
-}
 
 int Gesture::home() {
     
+    // These functions calculates the summed Euclidean distance between all of the points in the vectors that needed to be compared for each section.
+    // By totalling the absolute value of the difference between the X and Y values for each of the normalized points between the recorded shape vector and each
+    // calibrated, pre-recorded shape vector give you the differences between each, the findminimum then returns the smallest distance, giving you a
+    // nearest shape result.
+    
+    // Each section of the synth has a function, in which is are the calculations and comparisons between the active shapes in that section.
     
     for(int i = 0; i < record.size(); i++) {
         sineDiff += abs(record[i].first - sine[i].first) + abs(record[i].second - sine[i].second);
         triangleDiff += abs(record[i].first - triangle[i].first) + abs(record[i].second - triangle[i].second);
         squareDiff += abs(record[i].first - square[i].first) + abs(record[i].second - square[i].second);
         eightDiff += abs(record[i].first - eight[i].first) + abs(record[i].second - eight[i].second);
-        arpDiff += abs(record[i].first - arp[i].first) + abs(record[i].second - arp[i].second);
+        sawDiff += abs(record[i].first - saw[i].first) + abs(record[i].second - saw[i].second);
         FXDiff += abs(record[i].first - FX[i].first) + abs(record[i].second - FX[i].second);
     }
     
-    int returnValoo = findMinimum(sineDiff, triangleDiff, squareDiff, eightDiff, arpDiff, FXDiff);
+    int returnValoo = findMinimum(sineDiff, triangleDiff, squareDiff, eightDiff, sawDiff, FXDiff);
     
     return returnValoo;
     
@@ -310,22 +318,14 @@ int Gesture::oscSelect() {
     
 }
 
-void Gesture::oscControl() {
-    
-    
-    
-}
-
-void Gesture::envelopeControl() {
-    
-}
-
 int Gesture::filterSelect() {
     
     for(int i = 0; i < record.size(); i++) {
         luDiff += abs(record[i].first - lineUp[i].first) + abs(record[i].second - lineUp[i].first);
         ldDiff += abs(record[i].first - lineDown[i].first) + abs(record[i].second - lineDown[i].first);
     }
+    
+    
     
     int returnValoo = findMinimum(luDiff, ldDiff, 10000, 10000, 10000, 10000);
     
@@ -351,18 +351,15 @@ int Gesture::filterSelectRed() {
     
 }
 
-void Gesture::filterControl() {
-    
-}
-
 int Gesture::LFOSelect() {
     
     for(int i = 0; i < record.size(); i++) {
         sineDiff += abs(record[i].first - sine[i].first) + abs(record[i].second - sine[i].second);
+        squareDiff += abs(record[i].first - square[i].first) + abs(record[i].second - square[i].second);
         FXDiff += abs(record[i].first - FX[i].first) + abs(record[i].second - FX[i].second);
     }
     
-    int returnValoo = findMinimum(sineDiff, FXDiff, 10000, 10000, 10000, 10000);
+    int returnValoo = findMinimum(sineDiff, squareDiff, FXDiff, 10000, 10000, 10000);
     
     return returnValoo;
     
@@ -385,23 +382,13 @@ int Gesture::LFOSelectRed() {
     
 }
 
-void Gesture::LFOControl() {
-    
-}
-
-void Gesture::portaControl() {
-    
-}
-
-void Gesture::tremControl() {
-    
-}
-
 int Gesture::arpSelect() {
     
+    
+    
 }
 
-void Gesture::arpControl() {
+int Gesture::arpSelectRed() {
     
 }
 
@@ -409,17 +396,8 @@ int Gesture::FXSelect() {
     
 }
 
-void Gesture::chorusControl() {
-    
-}
-
-void Gesture::delayControl() {
-    
-}
-
-void Gesture::reverbControl() {
-    
-}
+// Control gesture function. Takes the chosen button and acceleration value, scales the acceleration values and adds/subtracts to the chosen feature in, returning
+// the updated value.
 
 double Gesture::control(double featureIn, int buttonIn, double valueIn, double lowerThres, double upperThres, float scale) {
     
@@ -444,6 +422,8 @@ double Gesture::control(double featureIn, int buttonIn, double valueIn, double l
     return featureIn;
     
 }
+
+// Reset all differences and clear the record vector. This function is called after every gesture recognition sequence.
 
 void Gesture::clearEverything() {
     

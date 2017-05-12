@@ -27,7 +27,7 @@ public:
     
     void title();
     void instructions();
-    void calibration();
+    void calibration(int one, int two, int three, int four, int five, int six, int seven, int eight, int nine);
     void homeSec();
     void oscSelect();
     void oscControl();

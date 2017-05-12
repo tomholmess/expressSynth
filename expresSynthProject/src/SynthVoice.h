@@ -20,19 +20,27 @@ public:
     
     maxiEnv ADSR, filterADSR;
     maxiFilter VCF1, VCF2;
-    maxiOsc VCO1, VCO2, VCO3, VCO4, LFO, Trem;
+    maxiOsc VCO1, VCO2, VCO3, VCO4, LFO, Trem, Chorus, arpPhasor;
+    maxiDelayline delay, reverb;
     
-    double VCO1Out, VCO2Out, VCO3Out, VCO4Out, VCOOut, LFOOut, VCF1Out, VCF2Out, ADSROut, TremOut, pitch, voiceOut;
+    double VCO1Out, VCO2Out, VCO3Out, VCO4Out, VCOOut, LFOOut, VCF1Out, VCF2Out, ADSROut, FilterADSROut, TremOut, voiceOut, chorusOut, delayOut, reverbOut, midiNote, frequency;
     
-    double cutoff, resonance, LFOSpeed = 1., LFODepth, TremSpeed, TremDepth;
+    double cutoff, resonance, LFOSpeed = 1., LFODepth, TremSpeed, TremDepth, PortaSpeed, arpSpeed;
     int waveOne, waveTwo, waveThree, waveFour, VCF1Type, VCF2Type;
-    int waveTwoPitch, waveThreePitch, waveFourPitch;
+    int waveTwoPitch, waveThreePitch, waveFourPitch, arpAddition;
     
+    int arpMode;
+    bool arpOnOff;
+    int numOctaves;
+    bool up = true, down = false;
     
+    int fifths[21] = {0, 3, 5, 7, 9, 12, 15, 17, 19, 21, 24, 27, 29, 31, 33, 36, 39, 41, 43, 45, 48};
     
     double voicePlay();
     void setEnvelope(double attack, double decay, double sustain, double release);
     void setFilterEnvelope(double attack, double decay, double sustain, double release);
+    
+    double midiToFrequency(int n);
     
     void setup();
     
